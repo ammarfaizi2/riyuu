@@ -1,0 +1,10 @@
+*.o
+*.d
+*.so
+*.swo
+*.swp
+*.tmp
+*.lock
+/.deps
+/storage/
+/.phpintel/
