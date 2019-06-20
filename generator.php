@@ -78,7 +78,7 @@ $closure = function (string $file) use ($argv, &$noCompile) {
 rscan_callback(__DIR__."/src", $closure);
 rscan_callback(__DIR__."/include", $closure);
 
-if ($noCompile) {
+if ($noCompile && (isset($argv[1])) && ($argv[1] !== "deps")) {
 	print "generator.php: Nothing to be done for 'all'\n";
 	exit(0);
 }
