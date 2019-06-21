@@ -99,9 +99,11 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				OPT2_NEED_ARG("bind-port", opt_bind_port) else
 				OPT2_NEED_ARG("nickname", opt_nickname) else
 				{
-					#define _error_text "Invalid parameter \"-\""
-					*error = (char *)malloc(sizeof(_error_text));
+					#define _error_text "Invalid parameter \"--"
+					*error = (char *)malloc(sizeof(_error_text) + len);
 					strcpy(*error, _error_text);
+					strcat(*error, $farg);
+					*((*error) + len + sizeof(_error_text) - 3) = '"';
 					#undef _error_text
 					goto err;
 				}
