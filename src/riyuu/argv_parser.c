@@ -4,7 +4,8 @@
 #include <riyuu/argv_parser.h>
 
 // Free riyuu_opt heap.
-void riyuu_opt_destroy(riyuu_plan *opt) {
+void riyuu_opt_destroy(riyuu_plan *opt)
+{
 	if (opt == NULL) {
 		return;
 	}
@@ -22,7 +23,8 @@ void riyuu_opt_destroy(riyuu_plan *opt) {
 }
 
 // Parse argv
-riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error) {
+riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error)
+{
 	int i;
 	riyuu_plan *ret;
 	size_t len;
