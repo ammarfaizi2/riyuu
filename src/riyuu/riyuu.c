@@ -4,6 +4,8 @@
 
 riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 {
+	riyuu_server_config *config;
+
 	if (opt == NULL) {
 		if (error != NULL) {
 			#define _error_text "Cannot initialize riyuu server: Config is empty!"
@@ -11,6 +13,14 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 			strcpy(*error, _error_text);
 			return NULL;
 		}
+	}
+
+	config = (riyuu_server_config *)malloc(sizeof(riyuu_server_config));
+	config->bind_addr = NULL;
+	config->bind_port = 0;
+
+	for (uint16_t i = 0; i < opt->opt_count; ++i) {
+		
 	}
 
 	return NULL;
