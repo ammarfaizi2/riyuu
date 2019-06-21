@@ -39,6 +39,7 @@ err:
 		#define _error_text "Cannot initialize riyuu server: Config is empty!"
 		*error = (char *)malloc(sizeof(_error_text));
 		strcpy(*error, _error_text);
+		#undef _error_text
 	}
 	return NULL;
 }
