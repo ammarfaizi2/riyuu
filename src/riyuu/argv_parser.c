@@ -99,9 +99,7 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 					*error = (char *)malloc(sizeof(_error_text));
 					strcpy(*error, _error_text);
 					#undef _error_text
-
-					free(ret);
-					return NULL;
+					goto err;
 				}
 
 				alloc_used++;
@@ -110,6 +108,15 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				continue;
 			} else {
 				#define $farg (*($arg + 1))
+
+				{
+					#define _error_text "Invalid parameter \"-%c\""
+					*error = (char *)malloc(sizeof(_error_text));
+					sprintf(*error, _error_text, $farg);
+					#undef _error_text
+					goto err;
+				}
+
 				#undef $farg
 				continue;
 			}
