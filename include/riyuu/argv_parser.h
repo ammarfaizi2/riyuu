@@ -8,6 +8,7 @@
 typedef enum {
 	opt_bind_address = 1,
 	opt_bind_port = 2,
+	opt_nickname = 3,
 } riyuu_argv_opt;
 
 typedef struct _riyuu_opt {
@@ -22,5 +23,6 @@ typedef struct _riyuu_plan {
 } riyuu_plan;
 
 riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
+void riyuu_opt_destroy(riyuu_plan *opt);
 
 #endif
