@@ -1,10 +1,16 @@
 
 #include <stdio.h>
+#include <string.h>
 #include <riyuu/riyuu.h>
 #include <riyuu/argv_parser.h>
 
 int main(int argc, char *argv[], char *envp[])
 {
+	if (argc == 1) {
+		show_help(argv[0]);
+		return 0;
+	}
+
    	char *error;
 	riyuu_plan *opt;
 	riyuu_server_config *config;

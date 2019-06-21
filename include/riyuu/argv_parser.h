@@ -24,5 +24,6 @@ typedef struct _riyuu_plan {
 
 riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
 void riyuu_opt_destroy(riyuu_plan *opt);
+void show_help(char *appname);
 
 #endif

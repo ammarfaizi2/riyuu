@@ -141,3 +141,12 @@ err:
 	riyuu_opt_destroy(ret);
 	return NULL;
 }
+
+void show_help(char *appname) {
+	printf("Usage: %s [options]\n\n", appname);
+	printf("Options:\n");
+	printf("  --help\t\t\tShow this message\n");
+	printf("  --version\t\t\tShow riyuu version\n");
+	printf("  --bind-address\t\tSpecify bind address (default: 0.0.0.0)\n");
+	printf("  --bind-port\t\t\tSpecify bind port (default: 1010)\n");
+}
