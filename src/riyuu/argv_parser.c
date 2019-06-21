@@ -129,7 +129,9 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 			}
 		}
 	}
+
 	#undef $arg
+	#undef OPT2_NO_ARG
 	#undef OPT_NEED_ARG
 	return ret;
 
