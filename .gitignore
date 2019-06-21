@@ -6,5 +6,6 @@
 *.tmp
 *.lock
 /.deps
+/riyuu
 /storage/
 /.phpintel/
