@@ -111,8 +111,13 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				OPT2_NEED_ARG("bind-address", opt_bind_address) else
 				OPT2_NEED_ARG("bind-port", opt_bind_port) else
 				OPT2_NEED_ARG("nickname", opt_nickname) else
-				OPT2_NO_ARG("daemon", opt_daemonize) else
-				OPT2_NO_ARG("daemonize", opt_daemonize) else
+
+				/**
+				 * @todo Make riyuu daemon.
+				 */
+				// OPT2_NO_ARG("daemon", opt_daemonize) else
+				// OPT2_NO_ARG("daemonize", opt_daemonize) else
+
 				OPT2_NO_ARG("version", opt_version) else
 				OPT2_NO_ARG("help", opt_help) else
 				{
