@@ -3,11 +3,11 @@
 #include <string.h>
 #include <riyuu/argv_parser.h>
 
+// Free riyuu_opt heap.
 void riyuu_opt_destroy(riyuu_plan *opt) {
 	if (opt == NULL) {
 		return;
 	}
-
 	for (int i = 0; i < opt->opt_count; ++i) {
 		if (opt->opt[i] != NULL) {
 			free(opt->opt[i]->argopt);
@@ -21,6 +21,7 @@ void riyuu_opt_destroy(riyuu_plan *opt) {
 	opt = NULL;
 }
 
+// Parse argv
 riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error) {
 	int i;
 	riyuu_plan *ret;
@@ -88,6 +89,7 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				goto err;
 			}
 
+			// Parse option that starts with "--"
 			if ((*($arg + 1)) == '-') {
 				#define $farg ($arg + 2)
 
@@ -106,7 +108,10 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				#undef OPT_CMP
 				#undef $farg
 				continue;
-			} else {
+			} else 
+
+			// Parse option that starts with "-"
+			{
 				#define $farg (*($arg + 1))
 
 				{
