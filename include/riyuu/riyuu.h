@@ -7,6 +7,7 @@
 
 typedef struct _riyuu_server_config {
 	char *bind_addr;
+	char *nickname;
 	uint16_t bind_port;
 } riyuu_server_config;
 
