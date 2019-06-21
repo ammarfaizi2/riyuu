@@ -13,7 +13,7 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 
 	config = (riyuu_server_config *)malloc(sizeof(riyuu_server_config));
 	config->bind_addr = NULL;
-	config->bind_port = 0;
+	config->bind_port = 54884;
 	config->nickname = NULL;
 
 	for (uint16_t i = 0; i < opt->opt_count; ++i) {
