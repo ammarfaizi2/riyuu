@@ -9,7 +9,9 @@ typedef enum {
 	opt_bind_address = 1,
 	opt_bind_port = 2,
 	opt_nickname = 3,
-	opt_daemonize = 4
+	opt_daemonize = 4,
+	opt_version = 5,
+	opt_help = 6,
 } riyuu_argv_opt;
 
 typedef enum {
@@ -32,5 +34,6 @@ typedef struct _riyuu_plan {
 riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
 void riyuu_opt_destroy(riyuu_plan *opt);
 void show_help(char *appname);
+void show_version();
 
 #endif

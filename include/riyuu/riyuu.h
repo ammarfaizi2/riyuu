@@ -2,6 +2,8 @@
 #ifndef riyuu__riyuu_h
 #define riyuu__riyuu_h
 
+#define RIYUU_VERSION "riyuu v0.0.1"
+
 #include <stdint.h>
 #include <riyuu/argv_parser.h>
 

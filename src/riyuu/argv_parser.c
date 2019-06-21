@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <riyuu/riyuu.h>
 #include <riyuu/argv_parser.h>
 
 // Free riyuu_opt heap.
@@ -112,6 +113,8 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				OPT2_NEED_ARG("nickname", opt_nickname) else
 				OPT2_NO_ARG("daemon", opt_daemonize) else
 				OPT2_NO_ARG("daemonize", opt_daemonize) else
+				OPT2_NO_ARG("version", opt_version) else
+				OPT2_NO_ARG("help", opt_help) else
 				{
 					#define _error_text "Invalid parameter \"--"
 					*error = (char *)malloc(sizeof(_error_text) + len);
@@ -180,12 +183,13 @@ err:
 	return NULL;
 }
 
-void show_help(char *appname) {
+void show_help(char *appname)
+{
 	printf("Usage: %s [options]\n\n", appname);
 
 	// Commands
 	printf("Commands:\n");
-	printf("  serve\t\tRun riyuu server\n\n");
+	printf("  serve\t\t\tRun riyuu server\n\n");
 
 	// Options
 	printf("Options:\n");
@@ -193,4 +197,9 @@ void show_help(char *appname) {
 	printf("  --version\t\tShow riyuu version\n");
 	printf("  --bind-address\tSpecify bind address (default: 0.0.0.0)\n");
 	printf("  --bind-port\t\tSpecify bind port (default: 54884)\n");
+}
+
+void show_version()
+{
+	printf("%s\n", RIYUU_VERSION);
 }

@@ -33,6 +33,16 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 			case opt_daemonize:
 
 			break;
+
+			case opt_version:
+				show_version();
+				exit(0);
+			break;
+
+			case opt_help:
+				show_help(opt->appname);
+				exit(0);
+			break;
 		}
 	}
 
