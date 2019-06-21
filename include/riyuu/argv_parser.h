@@ -9,7 +9,13 @@ typedef enum {
 	opt_bind_address = 1,
 	opt_bind_port = 2,
 	opt_nickname = 3,
+	opt_daemonize = 4
 } riyuu_argv_opt;
+
+typedef enum {
+	cmd_no_cmd = 0,
+	cmd_serve = 1
+} riyuu_cmd;
 
 typedef struct _riyuu_opt {
 	riyuu_argv_opt opt;
@@ -18,6 +24,7 @@ typedef struct _riyuu_opt {
 
 typedef struct _riyuu_plan {
 	char *appname;
+	riyuu_cmd cmd;
 	riyuu_opt **opt;
 	uint16_t opt_count;
 } riyuu_plan;

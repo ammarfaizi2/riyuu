@@ -9,6 +9,7 @@ void riyuu_opt_destroy(riyuu_plan *opt)
 	if (opt == NULL) {
 		return;
 	}
+
 	for (int i = 0; i < opt->opt_count; ++i) {
 		if (opt->opt[i] != NULL) {
 			free(opt->opt[i]->argopt);
@@ -26,16 +27,21 @@ void riyuu_opt_destroy(riyuu_plan *opt)
 riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error)
 {
 	int i;
+	char *cmdptr;
 	riyuu_plan *ret;
 	size_t len;
+	bool got_cmd;
 	register uint8_t alloc_opt;
 	register uint8_t alloc_used;
 	const char error_need_arg[] = "Option %s needs an argument!";
 
+	got_cmd = false;
 	alloc_used = 0;
 	alloc_opt = 5;
+	cmdptr = NULL;
 	ret = (riyuu_plan *)malloc(sizeof(riyuu_plan));
 	ret->appname = argv[0];
+	ret->cmd = cmd_no_cmd;
 	ret->opt = (riyuu_opt **)malloc(sizeof(riyuu_opt *) * alloc_opt);
 	ret->opt_count = 0;
 
@@ -71,7 +77,13 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 			i++; \
 			continue; \
 		}
-
+	#define RCMD(_cmd, cmd_name) \
+		if (!strcmp($farg, _cmd)) { \
+			ret->cmd = cmd_name; \
+			got_cmd = true; \
+			cmdptr = $farg; \
+			continue; \
+		}
 
 	for (i = 1; i < argc; i++) {
 
@@ -98,6 +110,8 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				OPT2_NEED_ARG("bind-address", opt_bind_address) else
 				OPT2_NEED_ARG("bind-port", opt_bind_port) else
 				OPT2_NEED_ARG("nickname", opt_nickname) else
+				OPT2_NO_ARG("daemon", opt_daemonize) else
+				OPT2_NO_ARG("daemonize", opt_daemonize) else
 				{
 					#define _error_text "Invalid parameter \"--"
 					*error = (char *)malloc(sizeof(_error_text) + len);
@@ -129,6 +143,30 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				#undef $farg
 				continue;
 			}
+		} else {
+
+			#define $farg ($arg)
+
+			if (got_cmd) {
+				#define _error_text "Invalid parameter \"%s\" for \"%s\" command"
+				*error = (char *)malloc(sizeof(_error_text) + len + strlen(cmdptr));
+				sprintf(*error, _error_text, $farg, cmdptr);
+				#undef _error_text
+				goto err;
+			}
+
+			RCMD("serve", cmd_serve) else
+			{
+				#define _error_text "Invalid command \""
+				*error = (char *)malloc(sizeof(_error_text) + len);
+				strcpy(*error, _error_text);
+				strcat(*error, $farg);
+				*((*error) + sizeof(_error_text) + len - 1) = '"';
+				#undef _error_text
+				goto err;
+			}
+
+			#undef $farg
 		}
 	}
 
@@ -144,9 +182,15 @@ err:
 
 void show_help(char *appname) {
 	printf("Usage: %s [options]\n\n", appname);
+
+	// Commands
+	printf("Commands:\n");
+	printf("  serve\t\tRun riyuu server\n\n");
+
+	// Options
 	printf("Options:\n");
-	printf("  --help\t\t\tShow this message\n");
-	printf("  --version\t\t\tShow riyuu version\n");
-	printf("  --bind-address\t\tSpecify bind address (default: 0.0.0.0)\n");
-	printf("  --bind-port\t\t\tSpecify bind port (default: 1010)\n");
+	printf("  --help\t\tShow this message\n");
+	printf("  --version\t\tShow riyuu version\n");
+	printf("  --bind-address\tSpecify bind address (default: 0.0.0.0)\n");
+	printf("  --bind-port\t\tSpecify bind port (default: 54884)\n");
 }

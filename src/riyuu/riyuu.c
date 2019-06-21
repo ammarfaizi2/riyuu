@@ -29,6 +29,10 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 			case opt_nickname:
 				config->nickname = opt->opt[i]->argopt;
 			break;
+
+			case opt_daemonize:
+
+			break;
 		}
 	}
 
