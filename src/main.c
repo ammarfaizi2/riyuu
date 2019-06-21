@@ -5,7 +5,6 @@
 
 int main(int argc, char *argv[], char *envp[])
 {
-   
    	char *error;
 	riyuu_plan *opt;
 	riyuu_server_config *config;
