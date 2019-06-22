@@ -8,6 +8,7 @@
 #include <riyuu/argv_parser.h>
 
 typedef struct _riyuu_server_config {
+	riyuu_cmd cmd;
 	char *bind_addr;
 	char *nickname;
 	uint16_t bind_port;
