@@ -10,7 +10,6 @@
 #include <netinet/in.h>
 #include <riyuu/riyuu.h>
 #include <thpool/thpool.h>
-#include <riyuu/riyuu_obj.h>
 #include <riyuu/riyuu_socket.h>
 
 void error(const char *msg)
@@ -20,27 +19,27 @@ void error(const char *msg)
 }
 
 void *thread_worker(void *_fd) {
-	#define newsockfd (*((int *)_fd))
-	ssize_t n;
-	riyuu_obj *obj = (riyuu_obj *)malloc(sizeof(riyuu_obj) + 8096);
+	// #define newsockfd (*((int *)_fd))
+	// ssize_t n;
+	// riyuu_obj *obj = (riyuu_obj *)malloc(sizeof(riyuu_obj) + 8096);
 
-	n = read(newsockfd, obj, sizeof(riyuu_obj) + 8096);
+	// n = read(newsockfd, obj, sizeof(riyuu_obj) + 8096);
 
-	if (n < 0) {
-		error("ERROR reading from socket");
-	}
+	// if (n < 0) {
+	// 	error("ERROR reading from socket");
+	// }
 
-	printf("Length: %ld\n", obj->len);
-	printf("Data: %s\n", obj->data);
+	// printf("Length: %ld\n", obj->len);
+	// printf("Data: %s\n", obj->data);
 
-	n = write(newsockfd, "I got your message\n", 19);
+	// n = write(newsockfd, "I got your message\n", 19);
 
-	if (n < 0) {
-		error("ERROR writing to socket");
-	}
-	close(newsockfd);
-	return NULL;
-	#undef newsockfd
+	// if (n < 0) {
+	// 	error("ERROR writing to socket");
+	// }
+	// close(newsockfd);
+	// return NULL;
+	// #undef newsockfd
 }
 
 void riyuu_tcp_bind(char *addr, uint16_t port)

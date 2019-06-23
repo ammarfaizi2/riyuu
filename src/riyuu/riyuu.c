@@ -6,11 +6,11 @@
 
 char default_bind_addr[] = "0.0.0.0";
 
-riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
+riyuu_server_config *riyuu_server_init(riyuu_argv *opt, char **error)
 {
 	riyuu_server_config *config;
 
-	if (opt == NULL || ((opt->opt_count < 1) && (opt->cmd == cmd_no_cmd))) {
+	if (opt == NULL || (opt->opt_count < 1)) {
 		goto err;
 	}
 
@@ -18,41 +18,29 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 	config->bind_addr = default_bind_addr;
 	config->bind_port = 54884;
 	config->nickname = NULL;
-	config->cmd = opt->cmd;
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wswitch"
 	for (uint16_t i = 0; i < opt->opt_count; ++i) {
-		switch (opt->opt[i]->opt) {
-			case opt_bind_address:
-				config->bind_addr = opt->opt[i]->argopt;
+		switch (opt->opts[i]->opt) {
+			case opt_server_bind_address:
+				config->bind_addr = opt->opts[i]->arg;
 			break;
 
-			case opt_bind_port:
-				config->bind_port = (uint16_t)atol(opt->opt[i]->argopt);
+			case opt_server_bind_port:
+				config->bind_port = (uint16_t)atol(opt->opts[i]->arg);
 			break;
 
-			case opt_nickname:
-				config->nickname = opt->opt[i]->argopt;
+			case opt_server_nickname:
+				config->nickname = opt->opts[i]->arg;
 			break;
 
-			case opt_daemonize:
+			case opt_server_daemonize:
 
-			break;
-
-			case opt_version:
-				show_version();
-				exit(0);
-			break;
-
-			case opt_serialize_target_file:
-				config->serialize_file = opt->opt[i]->argopt;
-			break;
-
-			case opt_help:
-				show_help(opt->appname);
-				exit(0);
 			break;
 		}
 	}
+	#pragma GCC diagnostic pop
 
 	return config;
 
@@ -68,18 +56,7 @@ err:
 
 uint8_t riyuu_server_run(riyuu_server_config *config)
 {
-	switch (config->cmd) {
-		case cmd_no_cmd:
-			return 0;
-		break;
-		case cmd_serve:
-			riyuu_tcp_bind(config->bind_addr, config->bind_port);
-		break;
-		case cmd_serialize:
-			riyuu_serialize_cmd(config->serialize_file);
-		break;
-	}
-	
+	riyuu_tcp_bind(config->bind_addr, config->bind_port);
 	return 0;
 }
 

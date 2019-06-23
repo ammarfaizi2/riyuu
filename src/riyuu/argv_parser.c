@@ -2,34 +2,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <riyuu/riyuu.h>
-#include <riyuu/argv_parser.h>
 
-// Free riyuu_opt heap.
-void riyuu_opt_destroy(riyuu_plan *opt)
+// Free riyuu_argv_opt heap.
+void riyuu_opt_destroy(riyuu_argv *opt)
 {
 	if (opt == NULL) {
 		return;
 	}
 
 	for (int i = 0; i < opt->opt_count; ++i) {
-		if (opt->opt[i] != NULL) {
-			free(opt->opt[i]->argopt);
-			opt->opt[i]->argopt = NULL;
-			free(opt->opt[i]);
+		if (opt->opts[i] != NULL) {
+			free(opt->opts[i]->arg);
+			opt->opts[i]->arg = NULL;
+			free(opt->opts[i]);
 		}
 	}
-	free(opt->opt);
-	opt->opt = NULL;
+	free(opt->opts);
+	opt->opts = NULL;
 	free(opt);
 	opt = NULL;
 }
 
 // Parse argv
-riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error)
+riyuu_argv *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error)
 {
 	int i;
 	char *cmdptr;
-	riyuu_plan *ret;
+	riyuu_argv *ret;
 	size_t len;
 	bool got_cmd;
 	register uint8_t alloc_opt;
@@ -40,24 +39,24 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 	alloc_used = 0;
 	alloc_opt = 5;
 	cmdptr = NULL;
-	ret = (riyuu_plan *)malloc(sizeof(riyuu_plan));
+	ret = (riyuu_argv *)malloc(sizeof(riyuu_argv));
 	ret->appname = argv[0];
 	ret->cmd = cmd_no_cmd;
-	ret->opt = (riyuu_opt **)malloc(sizeof(riyuu_opt *) * alloc_opt);
+	ret->opts = (riyuu_argv_opt **)malloc(sizeof(riyuu_argv_opt *) * alloc_opt);
 	ret->opt_count = 0;
 
 	#define $arg (argv[i])
 	#define SET_ARG_1(OPT_ENUM) \
-		ret->opt[alloc_used] = (riyuu_opt *)malloc(sizeof(riyuu_opt)); \
-		ret->opt[alloc_used]->opt = OPT_ENUM; \
-		ret->opt[alloc_used]->argopt = argv[i + 1]; \
+		ret->opts[alloc_used] = (riyuu_argv_opt *)malloc(sizeof(riyuu_opt)); \
+		ret->opts[alloc_used]->opt = OPT_ENUM; \
+		ret->opts[alloc_used]->arg = argv[i + 1]; \
 		alloc_used++; \
 		continue;
 	#define OPT2_NO_ARG(_opt, opt_name) \
 		if (!strcmp($farg, _opt)) { \
-			ret->opt[alloc_used] = (riyuu_opt *)malloc(sizeof(riyuu_opt)); \
-			ret->opt[alloc_used]->opt = opt_name; \
-			ret->opt[alloc_used]->argopt = NULL; \
+			ret->opts[alloc_used] = (riyuu_argv_opt *)malloc(sizeof(riyuu_opt)); \
+			ret->opts[alloc_used]->opt = opt_name; \
+			ret->opts[alloc_used]->arg = NULL; \
 			ret->opt_count++; \
 			alloc_used++; \
 			i++; \
@@ -70,9 +69,9 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				sprintf(*error, error_need_arg, _opt); \
 				goto err; \
 			} \
-			ret->opt[alloc_used] = (riyuu_opt *)malloc(sizeof(riyuu_opt)); \
-			ret->opt[alloc_used]->opt = opt_name; \
-			ret->opt[alloc_used]->argopt = argv[i + 1]; \
+			ret->opts[alloc_used] = (riyuu_argv_opt *)malloc(sizeof(riyuu_opt)); \
+			ret->opts[alloc_used]->opt = opt_name; \
+			ret->opts[alloc_used]->arg = argv[i + 1]; \
 			ret->opt_count++; \
 			alloc_used++; \
 			i++; \
@@ -90,7 +89,7 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 
 		if ((alloc_used + 1) >= alloc_opt) {
 			alloc_opt += 5;
-			ret->opt = (riyuu_opt **)realloc(ret->opt, sizeof(riyuu_opt *) * alloc_opt);
+			ret->opts = (riyuu_argv_opt **)realloc(ret->opts, sizeof(riyuu_argv_opt *) * alloc_opt);
 		}
 
 		len = strlen($arg);
@@ -108,17 +107,18 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 			if ((*($arg + 1)) == '-') {
 				#define $farg ($arg + 2)
 
-				OPT2_NEED_ARG("bind-address", opt_bind_address) else
-				OPT2_NEED_ARG("bind-port", opt_bind_port) else
-				OPT2_NEED_ARG("nickname", opt_nickname) else
-				OPT2_NEED_ARG("sfile", opt_serialize_target_file) else
-				OPT2_NEED_ARG("serialize-file", opt_serialize_target_file) else
+				OPT2_NEED_ARG("bind-address", opt_server_bind_address) else
+				OPT2_NEED_ARG("bind-port", opt_server_bind_port) else
+				OPT2_NEED_ARG("nickname", opt_server_nickname) else
+
+				OPT2_NEED_ARG("host", opt_client_target_host) else
+				OPT2_NEED_ARG("port", opt_client_target_port) else
 
 				/**
 				 * @todo Make riyuu daemon.
 				 */
-				// OPT2_NO_ARG("daemon", opt_daemonize) else
-				// OPT2_NO_ARG("daemonize", opt_daemonize) else
+				// OPT2_NO_ARG("daemon", opt_server_daemonize) else
+				// OPT2_NO_ARG("daemonize", opt_server_daemonize) else
 
 				OPT2_NO_ARG("version", opt_version) else
 				OPT2_NO_ARG("help", opt_help) else
@@ -165,14 +165,15 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				goto err;
 			}
 
-			RCMD("serve", cmd_serve) else
-			RCMD("serialize", cmd_serialize) else
+			RCMD("serve", cmd_server_serve) else
+			RCMD("connect", cmd_client_connect) else
 			{
 				#define _error_text "Invalid command \""
-				*error = (char *)malloc(sizeof(_error_text) + len);
+				*error = (char *)malloc(sizeof(_error_text) + len + 2);
 				strcpy(*error, _error_text);
 				strcat(*error, $farg);
 				*((*error) + sizeof(_error_text) + len - 1) = '"';
+				*((*error) + sizeof(_error_text) + len) = '\0';
 				#undef _error_text
 				goto err;
 			}

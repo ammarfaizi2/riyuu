@@ -4,37 +4,22 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-
-typedef enum {
-	opt_bind_address = 1,
-	opt_bind_port = 2,
-	opt_nickname = 3,
-	opt_daemonize = 4,
-	opt_version = 5,
-	opt_help = 6,
-	opt_serialize_target_file = 7
-} riyuu_argv_opt;
-
-typedef enum {
-	cmd_no_cmd = 0,
-	cmd_serve = 1,
-	cmd_serialize = 2,
-} riyuu_cmd;
+#include <riyuu/riyuu.h>
 
 typedef struct _riyuu_opt {
-	riyuu_argv_opt opt;
-	char *argopt;
-} riyuu_opt;
+	riyuu_opt opt;
+	char *arg;
+} riyuu_argv_opt;
 
-typedef struct _riyuu_plan {
-	char *appname;
+typedef struct _riyuu_argv {
 	riyuu_cmd cmd;
-	riyuu_opt **opt;
+	char *appname;
+	riyuu_argv_opt **opts;
 	uint16_t opt_count;
-} riyuu_plan;
+} riyuu_argv;
 
-riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
-void riyuu_opt_destroy(riyuu_plan *opt);
+riyuu_argv *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
+void riyuu_opt_destroy(riyuu_argv *opt);
 void show_help(char *appname);
 void show_version();
 
