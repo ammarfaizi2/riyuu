@@ -12,11 +12,13 @@ typedef enum {
 	opt_daemonize = 4,
 	opt_version = 5,
 	opt_help = 6,
+	opt_serialize_target_file = 7
 } riyuu_argv_opt;
 
 typedef enum {
 	cmd_no_cmd = 0,
-	cmd_serve = 1
+	cmd_serve = 1,
+	cmd_serialize = 2,
 } riyuu_cmd;
 
 typedef struct _riyuu_opt {

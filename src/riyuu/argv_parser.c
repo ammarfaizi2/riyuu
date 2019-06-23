@@ -111,6 +111,8 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 				OPT2_NEED_ARG("bind-address", opt_bind_address) else
 				OPT2_NEED_ARG("bind-port", opt_bind_port) else
 				OPT2_NEED_ARG("nickname", opt_nickname) else
+				OPT2_NEED_ARG("sfile", opt_serialize_target_file) else
+				OPT2_NEED_ARG("serialize-file", opt_serialize_target_file) else
 
 				/**
 				 * @todo Make riyuu daemon.
@@ -164,6 +166,7 @@ riyuu_plan *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error
 			}
 
 			RCMD("serve", cmd_serve) else
+			RCMD("serialize", cmd_serialize) else
 			{
 				#define _error_text "Invalid command \""
 				*error = (char *)malloc(sizeof(_error_text) + len);

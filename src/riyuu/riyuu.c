@@ -43,6 +43,10 @@ riyuu_server_config *riyuu_server_init(riyuu_plan *opt, char **error)
 				exit(0);
 			break;
 
+			case opt_serialize_target_file:
+				config->serialize_file = opt->opt[i]->argopt;
+			break;
+
 			case opt_help:
 				show_help(opt->appname);
 				exit(0);
@@ -70,6 +74,9 @@ uint8_t riyuu_server_run(riyuu_server_config *config)
 		break;
 		case cmd_serve:
 			riyuu_tcp_bind(config->bind_addr, config->bind_port);
+		break;
+		case cmd_serialize:
+			riyuu_serialize_cmd(config->serialize_file);
 		break;
 	}
 	
