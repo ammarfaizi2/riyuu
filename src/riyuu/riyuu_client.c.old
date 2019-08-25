@@ -1,0 +1,99 @@
+
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <riyuu/riyuu.h>
+#include <riyuu/riyuu_socket.h>
+
+riyuu_client_config *riyuu_client_init(riyuu_argv *opt, char **error)
+{
+	riyuu_client_config *config;
+	if (opt == NULL) {
+		goto err;
+	}
+	config = (riyuu_client_config *)malloc(sizeof(riyuu_client_config));
+	config->target_host = NULL;
+	config->target_port = 0;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wswitch"
+	for (uint16_t i = 0; i < opt->opt_count; ++i) {
+		switch (opt->opts[i]->opt) {
+			case opt_client_target_host:
+				config->target_host = opt->opts[i]->arg;
+			break;
+
+			case opt_client_target_port:
+				config->target_port = (uint16_t)atol(opt->opts[i]->arg);
+			break;
+		}
+	}
+	#pragma GCC diagnostic pop
+
+	return config;
+
+err:
+	if (error != NULL) {
+		#define _error_text "Cannot initialize riyuu server: Config is empty!"
+		*error = (char *)malloc(sizeof(_error_text) + 1);
+		strcpy(*error, _error_text);
+		#undef _error_text
+	}
+	return NULL;
+}
+
+uint8_t riyuu_client_run(riyuu_client_config *config)
+{
+	riyuu_client_connect(config->target_host, config->target_port, NULL);
+	return 0;
+}
+
+uint8_t riyuu_client_connect(char *host_addr, uint16_t port, char **error)
+{
+    int sock = 0;
+    struct sockaddr_in serv_addr;
+    char buffer[1024];
+    riyuu_request *req;
+    size_t inlen;
+    size_t reqlen;
+    size_t reslen;
+
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)  { 
+        printf("\n Socket creation error \n"); 
+        return -1; 
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+
+    if (inet_pton(AF_INET, host_addr, &serv_addr.sin_addr) <= 0)   { 
+        printf("Invalid address or address is not supported.\n");
+        return 1;
+    }
+
+    printf("Connecting to %s...\n", host_addr);
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        printf("Connection failed!\n");
+        return 1;
+    }
+    printf("Connected!\n");
+
+    while(1) {
+    	printf(">> ");
+    	fflush(stdout);
+		fgets(buffer, 2048, stdin);
+		inlen = strlen(buffer) - 1;
+		reqlen = sizeof(riyuu_request) + (inlen + 1);
+		req = (riyuu_request *)malloc(reqlen);
+
+		req->len = inlen;
+		memcpy(req->data, buffer, inlen);
+
+	    send(sock, req, reqlen, 0);
+	    reslen = read(sock, buffer, 1024);
+	    write(1, buffer, reslen);
+	}
+	printf("asd");
+    return 0;
+}

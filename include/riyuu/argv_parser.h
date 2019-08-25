@@ -1,26 +1,12 @@
 
-#ifndef riyuu__argv_parser_h
-#define riyuu__argv_parser_h
+#ifndef RIYUU_ARGV_PARSER_H
+#define RIYUU_ARGV_PARSER_H
 
-#include <stdint.h>
-#include <stdlib.h>
 #include <riyuu/riyuu.h>
+#include <stdbool.h>
 
-typedef struct _riyuu_opt {
-	riyuu_opt opt;
-	char *arg;
-} riyuu_argv_opt;
-
-typedef struct _riyuu_argv {
-	riyuu_cmd cmd;
-	char *appname;
-	riyuu_argv_opt **opts;
-	uint16_t opt_count;
-} riyuu_argv;
-
-riyuu_argv *riyuu_argv_parser(int argc, char *argv[], char *envp[], char **error);
-void riyuu_opt_destroy(riyuu_argv *opt);
-void show_help(char *appname);
+void show_help(char *app_name);
 void show_version();
+bool argv_parser(int argc, char *argv[], char *envp[], riyuu_run *run, uint8_t *exit_code);
 
 #endif
